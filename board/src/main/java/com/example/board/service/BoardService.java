@@ -10,6 +10,7 @@ import com.example.board.repository.BoardRepository;
 import com.example.board.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -141,10 +142,10 @@ public class BoardService {
             MsgCodeResponseDto result = new MsgCodeResponseDto();
             if (board.getUsername().equals(user.getUsername())) {
                 boardRepository.deleteById(id);
-                result.setResult("게시글 삭제 성공", "200");
+                result.setResult("게시글 삭제 성공", HttpStatus.OK.value());
                 return result;
             } else {
-                result.setResult("게시글 삭제 실패", "404");;
+                result.setResult("게시글 삭제 실패", HttpStatus.OK.value());
                 return result;
             }
         }
