@@ -1,7 +1,6 @@
 package com.example.board.entity;
 
 import com.example.board.dto.BoardRequestDto;
-import com.example.board.dto.BoardRequestPW;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,38 +15,52 @@ public class Board extends Timestamped{
     private Long id;
 
     @Column(nullable = false)
-    private String title;
+    private String username;
 
     @Column(nullable = false)
-    private String author;
+    private String title;
 
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private String password;
 
-    public Board(BoardRequestDto requestDto){
-        this.title = requestDto.getTitle();
-        this.author = requestDto.getAuthor();
-        this.content = requestDto.getContent();
-        this.password = requestDto.getPassword();
-    }
+    @ManyToOne
+    @JoinColumn(name = "USER_ID", nullable = false)
+    private User user;
 
-    public void getBoardId(BoardRequestDto requestDto){
+    public Board(BoardRequestDto requestDto, User user){
+        this.username = user.getUsername();
         this.title = requestDto.getTitle();
-        this.author = requestDto.getAuthor();
         this.content = requestDto.getContent();
-        this.password = requestDto.getPassword();
+        this.user = user;
     }
 
     public void update(BoardRequestDto requestDto){
         this.title = requestDto.getTitle();
-        this.author = requestDto.getAuthor();
         this.content = requestDto.getContent();
     }
 
-    public void delete(BoardRequestPW requestPW){
-        this.password = requestPW.getPassword();
-    }
+//    public Board(BoardRequestDto requestDto){
+//        this.title = requestDto.getTitle();
+//        this.author = requestDto.getAuthor();
+//        this.content = requestDto.getContent();
+//        this.password = requestDto.getPassword();
+//    }
+//
+//    public void getBoardId(BoardRequestDto requestDto){
+//        this.title = requestDto.getTitle();
+//        this.author = requestDto.getAuthor();
+//        this.content = requestDto.getContent();
+//        this.password = requestDto.getPassword();
+//    }
+//
+//    public void update(BoardRequestDto requestDto){
+//        this.title = requestDto.getTitle();
+//        this.author = requestDto.getAuthor();
+//        this.content = requestDto.getContent();
+//    }
+
+//    public void delete(BoardRequestPW requestPW){
+//        this.password = requestPW.getPassword();
+//    }
 }
