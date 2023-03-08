@@ -5,7 +5,6 @@ import com.example.board.dto.MsgCodeResponseDto;
 import com.example.board.dto.SignupRequestDto;
 import com.example.board.service.UserService;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -27,7 +26,7 @@ public class UserController {
     public MsgCodeResponseDto signup(@RequestBody SignupRequestDto signupRequestDto, HttpServletResponse response){
         userService.signup(signupRequestDto, response);
         MsgCodeResponseDto result = new MsgCodeResponseDto();
-        result.setResult("회원가입 성공", HttpStatus.OK.value());
+        result.setResult("회원가입 성공", "200");
         return result;
     }
 
@@ -36,7 +35,7 @@ public class UserController {
     public MsgCodeResponseDto login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response){
         userService.login(loginRequestDto, response);
         MsgCodeResponseDto result = new MsgCodeResponseDto();
-        result.setResult("로그인 성공", HttpStatus.OK.value());
+        result.setResult("로그인 성공", "200");
         return result;
     }
 }

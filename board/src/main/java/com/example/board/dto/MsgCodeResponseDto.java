@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 public class MsgCodeResponseDto {
 
     private String msg;
-    private int statusCode;
+    private String statusCode;
 
-    public void setResult(String msg, int statusCode) {
+    public void setResult(String msg, String statusCode) {
         this.msg = msg;
         this.statusCode = statusCode;
     }

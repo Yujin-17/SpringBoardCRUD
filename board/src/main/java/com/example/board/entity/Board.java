@@ -23,6 +23,7 @@ public class Board extends Timestamped{
     @Column(nullable = false)
     private String content;
 
+
     @ManyToOne
     @JoinColumn(name = "USER_ID", nullable = false)
     private User user;
