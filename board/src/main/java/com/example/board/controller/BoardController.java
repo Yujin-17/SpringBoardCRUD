@@ -15,8 +15,6 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
-
-
 //    @GetMapping("/api/posts")
 //    public List<Board> getBoards(){
 //        return boardService.getBoards();

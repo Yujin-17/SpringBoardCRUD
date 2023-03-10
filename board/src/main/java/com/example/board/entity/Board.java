@@ -11,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class Board extends Timestamped{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -39,6 +39,12 @@ public class Board extends Timestamped{
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
     }
+
+    public Board(String username, String title, String content){
+        this.username = username;
+        this.title = title;
+        this.content = content;
+     }
 
 //    public Board(BoardRequestDto requestDto){
 //        this.title = requestDto.getTitle();

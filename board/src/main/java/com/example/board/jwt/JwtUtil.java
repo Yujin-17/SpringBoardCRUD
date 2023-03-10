@@ -38,7 +38,7 @@ public class JwtUtil {
     }
 
     // header 토큰을 가져오기
-    public String resolveToken(HttpServletRequest request) {
+    public static String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(7);
@@ -47,13 +47,13 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public String createToken(String username) {
+    public String createToken(String username, UserRoleEnum role) {
         Date date = new Date();
 
         return BEARER_PREFIX +
                 Jwts.builder()
                         .setSubject(username) // 토큰을 복호화하면 나오는 값 = username
-                        .claim(AUTHORIZATION_KEY, username) // Authorization username으로 해라
+                        .claim(AUTHORIZATION_KEY, role) // Authorization username으로 해라
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 이 토큰의 유효값 유효시간 -> 만료시간조정
                         .setIssuedAt(date) // 로그인한 시간
                         .signWith(key, signatureAlgorithm) // 알고리즘 -> 어떻게 토큰을 암호화를 했는지.

@@ -7,6 +7,7 @@ import com.example.board.entity.Board;
 import com.example.board.entity.User;
 import com.example.board.jwt.JwtUtil;
 import com.example.board.repository.BoardRepository;
+import com.example.board.repository.CommentRepository;
 import com.example.board.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
     private final JwtUtil jwtUtil;
 
 //    @Transactional(readOnly = true)
@@ -141,6 +143,7 @@ public class BoardService {
             );
             MsgCodeResponseDto result = new MsgCodeResponseDto();
             if (board.getUsername().equals(user.getUsername())) {
+                commentRepository.deleteByPostId(id);
                 boardRepository.deleteById(id);
                 result.setResult("게시글 삭제 성공", HttpStatus.OK.value());
                 return result;
@@ -151,8 +154,6 @@ public class BoardService {
         }
         return null;
     }
-
-
 }
 //    @Transactional
 //    public BoardResponseDto deleteBoard(Long id, String password){
