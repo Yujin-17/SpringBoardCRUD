@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class BoardsResponseDto {
+public class BoardCommentResponseDto {
 
     private Long id;
     private String username;
@@ -19,17 +19,19 @@ public class BoardsResponseDto {
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
 
-    public BoardsResponseDto(Board board){
+
+    public BoardCommentResponseDto(Board board){
         this.id = board.getId();
         this.username = board.getUsername();
         this.title = board.getTitle();
         this.content = board.getContent();
         this.createdAt = board.getCreatedAt();
         this.modifiedAt = board.getModifiedAt();
+        for(Comment comment : board.getCommentList()){
+            commentResponseDtoList.add(new CommentResponseDto(comment));
+        }
+
     }
-
-
-
-
 }

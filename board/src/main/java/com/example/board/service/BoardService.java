@@ -1,9 +1,8 @@
 package com.example.board.service;
 
-import com.example.board.dto.BoardRequestDto;
-import com.example.board.dto.BoardsResponseDto;
-import com.example.board.dto.MsgCodeResponseDto;
+import com.example.board.dto.*;
 import com.example.board.entity.Board;
+import com.example.board.entity.Comment;
 import com.example.board.entity.User;
 import com.example.board.jwt.JwtUtil;
 import com.example.board.repository.BoardRepository;
@@ -64,23 +63,24 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public List<BoardsResponseDto> getBoards() {
-        List<BoardsResponseDto> boardsResponseDtos = new ArrayList<>();
+    public List<BoardCommentResponseDto> getBoards() {
+        List<BoardCommentResponseDto> boardsResponseDtos = new ArrayList<>();
         List<Board> boardList = boardRepository.findAllByOrderByModifiedAtDesc();
+
         for (Board board : boardList) {
-            boardsResponseDtos.add(new BoardsResponseDto(board));
+            boardsResponseDtos.add(new BoardCommentResponseDto(board));
         }
         return boardsResponseDtos;
 
     }
 
     @Transactional(readOnly = true)
-    public BoardsResponseDto getBoardId(Long id) {
+    public BoardCommentResponseDto getBoardId(Long id) {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다")
         );
 
-        return new BoardsResponseDto(board);
+        return new BoardCommentResponseDto(board);
     }
 
     @Transactional
@@ -130,7 +130,7 @@ public class BoardService {
                 // 토큰에서 사용자 정보 가져오기
                 claims = jwtUtil.getUserInfoFromToken(token);
             } else {
-                throw new IllegalArgumentException("Token Error");
+                throw new IllegalArgumentException("토큰이 유효하지 않습니다");
             }
 
 

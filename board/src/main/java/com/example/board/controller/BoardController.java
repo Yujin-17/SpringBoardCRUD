@@ -1,9 +1,8 @@
 package com.example.board.controller;
 
-import com.example.board.dto.BoardRequestDto;
-import com.example.board.dto.BoardsResponseDto;
-import com.example.board.dto.MsgCodeResponseDto;
+import com.example.board.dto.*;
 import com.example.board.service.BoardService;
+import com.example.board.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +14,7 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
+    private final CommentService commentService;
 //    @GetMapping("/api/posts")
 //    public List<Board> getBoards(){
 //        return boardService.getBoards();
@@ -34,13 +34,13 @@ public class BoardController {
 
     // 게시글 목록 조회
     @GetMapping("/api/posts")
-    public List<BoardsResponseDto> getBoards() {
+    public List<BoardCommentResponseDto> getBoards() {
         return boardService.getBoards();
     }
 
     // 게시글 상세 조회
     @GetMapping("/api/post/{id}")
-    public BoardsResponseDto getBoardId(@PathVariable Long id) {
+    public BoardCommentResponseDto getBoardId(@PathVariable Long id) {
         return boardService.getBoardId(id);
     }
 
