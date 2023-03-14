@@ -133,7 +133,7 @@ public class BoardService {
                 throw new IllegalArgumentException("토큰이 유효하지 않습니다");
             }
 
-
+            MsgCodeResponseDto result = new MsgCodeResponseDto();
             // 토큰에서 가져온 사용자 정보를 사용해 DB 조회
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다")
@@ -141,7 +141,7 @@ public class BoardService {
             Board board = boardRepository.findById(id).orElseThrow(
                     () -> new IllegalArgumentException("게시글이 존재하지 않습니다")
             );
-            MsgCodeResponseDto result = new MsgCodeResponseDto();
+
             if (board.getUsername().equals(user.getUsername())) {
                 commentRepository.deleteByPostId(id);
                 boardRepository.deleteById(id);
