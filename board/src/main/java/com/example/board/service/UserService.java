@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 @Service
-@Component
 @RequiredArgsConstructor
 public class UserService {
 
@@ -24,10 +23,11 @@ public class UserService {
     private  final JwtUtil jwtUtil;
 
     // ADMIN_TOKEN
-    private  static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
+    private static final String ADMIN_TOKEN = "admin";
+
 
     @Transactional
-    public void signup(SignupRequestDto signupRequestDto, HttpServletResponse httpServletResponse){
+    public void signup(SignupRequestDto signupRequestDto){
         String username = signupRequestDto.getUsername();
         String password = signupRequestDto.getPassword();
 
@@ -38,7 +38,7 @@ public class UserService {
         }
 
         // 사용자 ROLE 확인
-        UserRoleEnum role = UserRoleEnum.USER;
+        UserRoleEnum role = UserRoleEnum.USER; // 사용자 권한의 기본값
         if(signupRequestDto.isAdmin()){
             if(!signupRequestDto.getAdminToken().equals(ADMIN_TOKEN)){
                 throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능 합니다.");

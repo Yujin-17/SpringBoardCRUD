@@ -7,6 +7,7 @@ import com.example.board.dto.MsgCodeResponseDto;
 import com.example.board.entity.Board;
 import com.example.board.entity.Comment;
 import com.example.board.entity.User;
+import com.example.board.entity.UserRoleEnum;
 import com.example.board.jwt.JwtUtil;
 import com.example.board.repository.BoardRepository;
 import com.example.board.repository.CommentRepository;
@@ -84,7 +85,7 @@ public class CommentService {
             Comment comment = commentRepository.findById(id).orElseThrow(
                     () -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다.")
             );
-            if (comment.getUsername().equals(comment.getUsername())) {
+            if (comment.getUsername().equals(user.getUsername()) || user.getRole() == UserRoleEnum.ADMIN) {
                 comment.update(commentUpdateRequestDto);
 
                 return new CommentResponseDto(comment);
@@ -122,12 +123,12 @@ public class CommentService {
             );
 
             MsgCodeResponseDto result = new MsgCodeResponseDto();
-            if (comment.getUsername().equals(user.getUsername())) {
+            if (comment.getUsername().equals(user.getUsername()) || user.getRole() == UserRoleEnum.ADMIN ) {
                 commentRepository.deleteById(id);
                 result.setResult("댓글 삭제 성공", HttpStatus.OK.value());
                 return result;
             } else {
-                result.setResult("댓글 삭제 실패", HttpStatus.OK.value());
+                result.setResult("댓글 삭제 실패", HttpStatus.BAD_REQUEST.value());
                 return result;
             }
 

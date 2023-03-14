@@ -4,6 +4,9 @@ import com.example.board.dto.*;
 import com.example.board.entity.Board;
 import com.example.board.entity.Comment;
 import com.example.board.entity.User;
+import com.example.board.entity.UserRoleEnum;
+import com.example.board.exception.ApiException;
+import com.example.board.exception.ExceptionEnum;
 import com.example.board.jwt.JwtUtil;
 import com.example.board.repository.BoardRepository;
 import com.example.board.repository.CommentRepository;
@@ -46,12 +49,11 @@ public class BoardService {
                 // 토큰에서 사용자 정보 가져오기
                 claims = jwtUtil.getUserInfoFromToken(token);
             } else {
-                throw new IllegalArgumentException("Token Error");
+                throw new ApiException(ExceptionEnum.INVAILD_TOKEN);
             }
-
             // 토큰에서 가져온 사용자 정보를 사용해 DB 조회
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다")
+                    () -> new ApiException(ExceptionEnum.NOT_FOUND_USER)
             );
 
             // 요청받은 DTO 로 DB에 저장할 객체 만들기
@@ -61,7 +63,6 @@ public class BoardService {
             return null;
         }
     }
-
     @Transactional(readOnly = true)
     public List<BoardCommentResponseDto> getBoards() {
         List<BoardCommentResponseDto> boardsResponseDtos = new ArrayList<>();
@@ -77,7 +78,7 @@ public class BoardService {
     @Transactional(readOnly = true)
     public BoardCommentResponseDto getBoardId(Long id) {
         Board board = boardRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("아이디가 존재하지 않습니다")
+                () -> new ApiException(ExceptionEnum.NOT_FOUND_USER)
         );
 
         return new BoardCommentResponseDto(board);
@@ -95,19 +96,19 @@ public class BoardService {
                 // 토큰에서 사용자 정보 가져오기
                 claims = jwtUtil.getUserInfoFromToken(token);
             } else {
-                throw new IllegalArgumentException("Token Error");
+                throw new ApiException(ExceptionEnum.INVAILD_TOKEN);
             }
 
 
             // 토큰에서 가져온 사용자 정보를 사용해 DB 조회
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다")
+                    () -> new ApiException(ExceptionEnum.NOT_FOUND_USER)
             );
             Board board = boardRepository.findById(id).orElseThrow(
-                    () -> new IllegalArgumentException("게시글이 존재하지 않습니다")
+                    () -> new ApiException(ExceptionEnum.NOT_FOUND_POST_ALL)
             );
 
-            if (board.getUsername().equals(user.getUsername())) {
+            if (board.getUsername().equals(user.getUsername()) || user.getRole() == UserRoleEnum.ADMIN) {
                 board.update(boardRequestDto);
 
                 return new BoardsResponseDto(board);
@@ -130,25 +131,25 @@ public class BoardService {
                 // 토큰에서 사용자 정보 가져오기
                 claims = jwtUtil.getUserInfoFromToken(token);
             } else {
-                throw new IllegalArgumentException("토큰이 유효하지 않습니다");
+                throw new ApiException(ExceptionEnum.INVAILD_TOKEN);
             }
 
             MsgCodeResponseDto result = new MsgCodeResponseDto();
             // 토큰에서 가져온 사용자 정보를 사용해 DB 조회
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다")
+                    () -> new ApiException(ExceptionEnum.NOT_FOUND_USER)
             );
             Board board = boardRepository.findById(id).orElseThrow(
-                    () -> new IllegalArgumentException("게시글이 존재하지 않습니다")
+                    () -> new ApiException(ExceptionEnum.NOT_FOUND_POST_ALL)
             );
 
-            if (board.getUsername().equals(user.getUsername())) {
+            if (board.getUsername().equals(user.getUsername()) || user.getRole() == UserRoleEnum.ADMIN) {
                 commentRepository.deleteByPostId(id);
                 boardRepository.deleteById(id);
                 result.setResult("게시글 삭제 성공", HttpStatus.OK.value());
                 return result;
             } else {
-                result.setResult("게시글 삭제 실패", HttpStatus.OK.value());;
+                result.setResult("게시글 삭제 실패", HttpStatus.BAD_REQUEST.value());;
                 return result;
             }
         }
