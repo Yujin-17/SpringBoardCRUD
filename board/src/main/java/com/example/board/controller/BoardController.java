@@ -1,9 +1,11 @@
 package com.example.board.controller;
 
 import com.example.board.dto.*;
+import com.example.board.security.UserDetailsImpl;
 import com.example.board.service.BoardService;
 import com.example.board.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +16,6 @@ import java.util.List;
 public class BoardController {
 
     private final BoardService boardService;
-    private final CommentService commentService;
 //    @GetMapping("/api/posts")
 //    public List<Board> getBoards(){
 //        return boardService.getBoards();
@@ -27,9 +28,9 @@ public class BoardController {
 
     // 게시글 등록하기
     @PostMapping("/api/post")
-    public BoardsResponseDto createBoard(@RequestBody BoardRequestDto requestDto, HttpServletRequest request) {
+    public BoardsResponseDto createBoard(@RequestBody BoardRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         // 응답 보내기
-        return boardService.createBoard(requestDto, request);
+        return boardService.createBoard(requestDto, userDetails.getUser());
     }
 
     // 게시글 목록 조회
@@ -46,14 +47,14 @@ public class BoardController {
 
     // 게시글 수정
     @PutMapping("/api/post/{id}")
-    public BoardsResponseDto update(@PathVariable Long id, @RequestBody BoardRequestDto boardRequestDto, HttpServletRequest request) {
-        return boardService.update(id, boardRequestDto, request);
+    public BoardsResponseDto update(@PathVariable Long id, @RequestBody BoardRequestDto boardRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return boardService.update(id, boardRequestDto, userDetails.getUser());
     }
 
     //게시글 삭제
     @DeleteMapping("/api/post/{id}")
-    public MsgCodeResponseDto delete(@PathVariable Long id, HttpServletRequest request){
-        return boardService.delete(id, request);
+    public MsgCodeResponseDto delete(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return boardService.delete(id, userDetails.getUser());
     }
 
 //

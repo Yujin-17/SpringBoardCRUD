@@ -38,31 +38,29 @@ public class BoardService {
 
 
     @Transactional
-    public BoardsResponseDto createBoard(BoardRequestDto requestDto, HttpServletRequest request) {
-        // Request에서 token 가져오기
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
+    public BoardsResponseDto createBoard(BoardRequestDto requestDto, User user) {
+//        // Request에서 token 가져오기
+//        String token = jwtUtil.resolveToken(request);
+//        Claims claims;
+//
+//        // 토큰이 있는 경우에만 게시글 추가
+//        if (token != null) {
+//            if (jwtUtil.validateToken(token)) {
+//                // 토큰에서 사용자 정보 가져오기
+//                claims = jwtUtil.getUserInfoFromToken(token);
+//            } else {
+//                throw new ApiException(ExceptionEnum.INVAILD_TOKEN);
+//            }
+        // 토큰에서 가져온 사용자 정보를 사용해 DB 조회
+//        User user = userRepository.findByUsername(username).orElseThrow(
+//                () -> new ApiException(ExceptionEnum.NOT_FOUND_USER)
+//        );
 
-        // 토큰이 있는 경우에만 게시글 추가
-        if (token != null) {
-            if (jwtUtil.validateToken(token)) {
-                // 토큰에서 사용자 정보 가져오기
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new ApiException(ExceptionEnum.INVAILD_TOKEN);
-            }
-            // 토큰에서 가져온 사용자 정보를 사용해 DB 조회
-            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new ApiException(ExceptionEnum.NOT_FOUND_USER)
-            );
-
-            // 요청받은 DTO 로 DB에 저장할 객체 만들기
-            Board board = boardRepository.saveAndFlush(new Board(requestDto, user));
-            return new BoardsResponseDto(board);
-        } else {
-            return null;
-        }
+        // 요청받은 DTO 로 DB에 저장할 객체 만들기
+        Board board = boardRepository.saveAndFlush(new Board(requestDto, user));
+        return new BoardsResponseDto(board);
     }
+
     @Transactional(readOnly = true)
     public List<BoardCommentResponseDto> getBoards() {
         List<BoardCommentResponseDto> boardsResponseDtos = new ArrayList<>();
@@ -85,75 +83,74 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardsResponseDto update(Long id, BoardRequestDto boardRequestDto, HttpServletRequest request) {
-        // Request에서 token 가져오기
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
+    public BoardsResponseDto update(Long id, BoardRequestDto boardRequestDto, User user) {
+//        // Request에서 token 가져오기
+//        String token = jwtUtil.resolveToken(request);
+//        Claims claims;
+//
+//        // 토큰이 있는 경우에만 게시글 추가
+//        if (token != null) {
+//            if (jwtUtil.validateToken(token)) {
+//                // 토큰에서 사용자 정보 가져오기
+//                claims = jwtUtil.getUserInfoFromToken(token);
+//            } else {
+//                throw new ApiException(ExceptionEnum.INVAILD_TOKEN);
+//            }
 
-        // 토큰이 있는 경우에만 게시글 추가
-        if (token != null) {
-            if (jwtUtil.validateToken(token)) {
-                // 토큰에서 사용자 정보 가져오기
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new ApiException(ExceptionEnum.INVAILD_TOKEN);
-            }
 
+//        // 토큰에서 가져온 사용자 정보를 사용해 DB 조회
+//        User user = userRepository.findByUsername(username).orElseThrow(
+//                () -> new ApiException(ExceptionEnum.NOT_FOUND_USER)
+//        );
+        Board board = boardRepository.findById(id).orElseThrow(
+                () -> new ApiException(ExceptionEnum.NOT_FOUND_POST_ALL)
+        );
 
-            // 토큰에서 가져온 사용자 정보를 사용해 DB 조회
-            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new ApiException(ExceptionEnum.NOT_FOUND_USER)
-            );
-            Board board = boardRepository.findById(id).orElseThrow(
-                    () -> new ApiException(ExceptionEnum.NOT_FOUND_POST_ALL)
-            );
+        if (board.getUsername().equals(user.getUsername()) || user.getRole() == UserRoleEnum.ADMIN) {
+            board.update(boardRequestDto);
 
-            if (board.getUsername().equals(user.getUsername()) || user.getRole() == UserRoleEnum.ADMIN) {
-                board.update(boardRequestDto);
-
-                return new BoardsResponseDto(board);
-            } else {
-                return null;
-            }
+            return new BoardsResponseDto(board);
+        } else {
+            return null;
         }
-        return null;
     }
 
+
     @Transactional
-    public MsgCodeResponseDto delete(Long id, HttpServletRequest request){
-        // Request에서 token 가져오기
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
+    public MsgCodeResponseDto delete(Long id, User user) {
+//        // Request에서 token 가져오기
+//        String token = jwtUtil.resolveToken(request);
+//        Claims claims;
+//
+//        // 토큰이 있는 경우에만 게시글 추가
+//        if (token != null) {
+//            if (jwtUtil.validateToken(token)) {
+//                // 토큰에서 사용자 정보 가져오기
+//                claims = jwtUtil.getUserInfoFromToken(token);
+//            } else {
+//                throw new ApiException(ExceptionEnum.INVAILD_TOKEN);
+//            }
 
-        // 토큰이 있는 경우에만 게시글 추가
-        if (token != null) {
-            if (jwtUtil.validateToken(token)) {
-                // 토큰에서 사용자 정보 가져오기
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new ApiException(ExceptionEnum.INVAILD_TOKEN);
-            }
 
-            MsgCodeResponseDto result = new MsgCodeResponseDto();
-            // 토큰에서 가져온 사용자 정보를 사용해 DB 조회
-            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new ApiException(ExceptionEnum.NOT_FOUND_USER)
-            );
-            Board board = boardRepository.findById(id).orElseThrow(
-                    () -> new ApiException(ExceptionEnum.NOT_FOUND_POST_ALL)
-            );
+        // 토큰에서 가져온 사용자 정보를 사용해 DB 조회
+//        User user = userRepository.findByUsername(username).orElseThrow(
+//                () -> new ApiException(ExceptionEnum.NOT_FOUND_USER)
+//        );
+        MsgCodeResponseDto result = new MsgCodeResponseDto();
+        Board board = boardRepository.findById(id).orElseThrow(
+                () -> new ApiException(ExceptionEnum.NOT_FOUND_POST_ALL)
+        );
 
-            if (board.getUsername().equals(user.getUsername()) || user.getRole() == UserRoleEnum.ADMIN) {
-                commentRepository.deleteByPostId(id);
-                boardRepository.deleteById(id);
-                result.setResult("게시글 삭제 성공", HttpStatus.OK.value());
-                return result;
-            } else {
-                result.setResult("게시글 삭제 실패", HttpStatus.BAD_REQUEST.value());;
-                return result;
-            }
+        if (board.getUsername().equals(user.getUsername()) || user.getRole() == UserRoleEnum.ADMIN) {
+            commentRepository.deleteByPostId(id);
+            boardRepository.deleteById(id);
+            result.setResult("게시글 삭제 성공", HttpStatus.OK.value());
+            return result;
+        } else {
+            result.setResult("게시글 삭제 실패", HttpStatus.BAD_REQUEST.value());
+            ;
+            return result;
         }
-        return null;
     }
 }
 //    @Transactional

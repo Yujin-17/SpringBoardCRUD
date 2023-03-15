@@ -45,11 +45,11 @@ public class Board extends Timestamped{
         this.content = requestDto.getContent();
     }
 
-    public Board(String username, String title, String content){
-        this.username = username;
-        this.title = title;
-        this.content = content;
-     }
+//    public Board(String username, String title, String content){
+//        this.username = username;
+//        this.title = title;
+//        this.content = content;
+//     }
 
 //    public Board(BoardRequestDto requestDto){
 //        this.title = requestDto.getTitle();
